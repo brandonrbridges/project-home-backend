@@ -13,6 +13,9 @@ import { PropertiesService } from './properties.service'
 // Schema
 import { Property, PropertySchema } from './properties.schema'
 
+// Modules
+import { UsersModule } from 'src/users/users.module'
+
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -21,6 +24,7 @@ import { Property, PropertySchema } from './properties.schema'
         schema: PropertySchema,
       },
     ]),
+    UsersModule,
   ],
   controllers: [PropertiesController],
   providers: [PropertiesService],

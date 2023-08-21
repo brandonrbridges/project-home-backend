@@ -8,10 +8,19 @@ export type UserDocument = HydratedDocument<User>
 
 @Schema()
 export class User {
-  @Prop()
+  _id?: string
+
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+  })
   email: string
 
-  @Prop()
+  @Prop({
+    type: String,
+    required: true,
+  })
   password: string
 
   @Prop(
@@ -25,11 +34,18 @@ export class User {
     last: string
   }
 
-  @Prop()
-  role: string
-
-  @Prop()
+  @Prop({
+    type: String,
+    unique: true,
+  })
   phone: string
+
+  @Prop({
+    type: Array,
+    enum: ['tenant', 'landlord', 'agency', 'admin'],
+    default: ['landlord'],
+  })
+  roles: string[]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

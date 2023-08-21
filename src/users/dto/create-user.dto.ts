@@ -5,6 +5,6 @@ export class CreateUserDto {
     first: string
     last: string
   }
-  role: string
   phone: string
+  roles: string[]
 }

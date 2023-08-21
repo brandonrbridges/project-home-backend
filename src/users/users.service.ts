@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 // Mongoose
-import { Model } from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 
 // Schema
 import { User, UserDocument } from './user.schema'
@@ -26,20 +26,22 @@ export class UsersService {
     return array
   }
 
-  async findById(id: string): Promise<User> {
-    const data = await this.userModel
+  async findById(id: string | mongoose.Schema.Types.ObjectId): Promise<User> {
+    const user = await this.userModel
       .findById(id, {
         __v: false,
       })
       .exec()
 
-    const obj = data.toObject()
+    if (!user) {
+      return null
+    }
 
-    return obj
+    return user.toObject()
   }
 
   async findByEmail(email: string): Promise<User> {
-    const data = await this.userModel
+    const user = await this.userModel
       .findOne(
         { email },
         {
@@ -48,9 +50,11 @@ export class UsersService {
       )
       .exec()
 
-    const obj = data.toObject()
+    if (!user) {
+      return null
+    }
 
-    return obj
+    return user.toObject()
   }
 
   async create(user: User): Promise<User> {

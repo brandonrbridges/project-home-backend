@@ -16,6 +16,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto'
 // Packages
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
+import { User } from 'src/users/user.schema'
 
 @Injectable()
 export class AuthService {
@@ -113,7 +114,9 @@ export class AuthService {
     try {
       const verified = jwt.verify(token, process.env.SECRET)
 
-      const user = await this.usersService.findById(verified._id)
+      const { _id } = verified as User
+
+      const user = await this.usersService.findById(_id)
 
       const userObject = this.createUserObject(user)
 

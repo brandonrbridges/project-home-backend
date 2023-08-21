@@ -13,22 +13,28 @@ import { AppService } from './app.service'
 
 // Modules
 import { AuthModule } from './auth/auth.module'
+import { InvitationsModule } from './invitations/invitations.module'
+import { MailModule } from './mail/mail.module'
+import { MaintenanceTasksModule } from './maintenance-tasks/maintenance-tasks.module'
 import { PropertiesModule } from './properties/properties.module'
 import { SocketModule } from './socket/socket.module'
 import { SubcontractorsModule } from './subcontractors/subcontractors.module'
 import { UsersModule } from './users/users.module'
-import { MailModule } from './mail/mail.module'
+import { TenanciesModule } from './tenancies/tenancies.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthModule,
+    InvitationsModule,
+    MailModule,
+    MaintenanceTasksModule,
     PropertiesModule,
     SocketModule,
     SubcontractorsModule,
     UsersModule,
-    MailModule,
+    TenanciesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

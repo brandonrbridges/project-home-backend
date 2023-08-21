@@ -2,16 +2,25 @@
 import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose'
 
 // Mongoose
-import * as Mongoose from 'mongoose'
+import mongoose, { HydratedDocument } from 'mongoose'
 
-export type PropertyDocument = Mongoose.HydratedDocument<Property>
+export type PropertyDocument = HydratedDocument<Property>
 
 @Schema()
 export class Property {
   @Prop({
-    type: Mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
   })
-  owner_id: Mongoose.Schema.Types.ObjectId
+  owner_id: mongoose.Schema.Types.ObjectId
+
+  // virtual property
+  owner?: {
+    _id: string | mongoose.Schema.Types.ObjectId
+    name: {
+      first: string
+      last: string
+    }
+  }
 
   @Prop(
     raw({
@@ -51,28 +60,16 @@ export class Property {
   })
   bathrooms: number
 
-  @Prop(
-    raw({
-      amount: { type: Number, required: true },
-      start_date: { type: Date, required: true },
-      frequency: {
-        type: String,
-        required: true,
-        enum: ['weekly', 'biweekly', 'monthly', 'yearly'],
-      },
-    }),
-  )
-  rent: {
-    amount: number
-    start_date: Date
-    frequency: 'weekly' | 'biweekly' | 'monthly' | 'yearly'
-  }
-
   @Prop({
     type: Number,
     required: true,
   })
-  deposit: number
+  max_tenants: number
+
+  @Prop({
+    type: Array,
+  })
+  active_tenancies?: Array<mongoose.Schema.Types.ObjectId>
 }
 
 export const PropertySchema = SchemaFactory.createForClass(Property)

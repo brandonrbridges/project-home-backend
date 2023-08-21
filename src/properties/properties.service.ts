@@ -16,19 +16,31 @@ export class PropertiesService {
   ) {}
 
   async findAll(): Promise<Property[]> {
-    return this.propertyModel
+    const properties = await this.propertyModel
       .find(null, {
         __v: false,
       })
       .exec()
+
+    if (!properties) {
+      throw new Error('Properties not found')
+    }
+
+    return properties.map((property) => property.toObject())
   }
 
   async findById(id: string): Promise<Property> {
-    return this.propertyModel
+    const property = await this.propertyModel
       .findById(id, {
         __v: false,
       })
       .exec()
+
+    if (!property) {
+      throw new Error('Property not found')
+    }
+
+    return property.toObject()
   }
 
   async create(createPropertyDto: Property): Promise<Property> {
