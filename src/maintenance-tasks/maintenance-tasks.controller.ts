@@ -22,11 +22,7 @@ export class MaintenanceTasksController {
   find(
     @Query() query: { property_id?: string },
   ): Promise<MaintenanceTask | MaintenanceTask[]> {
-    if (query) {
-      return this.maintenanceTasksService.findOne(query)
-    } else {
-      return this.maintenanceTasksService.findAll()
-    }
+    return this.maintenanceTasksService.findAll(query)
   }
 
   @Post('create')

@@ -15,9 +15,9 @@ export class MaintenanceTasksService {
     private readonly taskModel: Model<MaintenanceTask>,
   ) {}
 
-  async findAll(): Promise<MaintenanceTask[]> {
+  async findAll(query: { property_id?: string }): Promise<MaintenanceTask[]> {
     const data = await this.taskModel
-      .find(null, {
+      .find(query, {
         __v: false,
       })
       .exec()
@@ -39,7 +39,27 @@ export class MaintenanceTasksService {
 
   async create(task: MaintenanceTask): Promise<MaintenanceTask> {
     const createdTask = new this.taskModel(task)
+    createdTask.identifier = this.generateIdentifier(createdTask.category)
+
+    let existingTask: MaintenanceTask | null
+
+    do {
+      existingTask = await this.findOne({
+        identifier: createdTask.identifier,
+      })
+
+      if (existingTask) {
+        createdTask.identifier = this.generateIdentifier(createdTask.category)
+      }
+    } while (existingTask)
 
     return createdTask.save()
+  }
+
+  generateIdentifier(category: string): string {
+    const categoryFirstCharacter = category.charAt(0).toUpperCase()
+    const randomSixDigitNumber = Math.floor(100000 + Math.random() * 900000)
+
+    return `${categoryFirstCharacter}/${randomSixDigitNumber}`
   }
 }

@@ -6,6 +6,23 @@ import mongoose, { HydratedDocument } from 'mongoose'
 
 export type MaintenanceTaskDocument = HydratedDocument<MaintenanceTask>
 
+const TaskCategoriesEnum = [
+  'carpentry',
+  'electrical',
+  'general',
+  'plumbing',
+  'structural',
+  'other',
+]
+
+const TaskStatusEnum = [
+  'pending',
+  'assigned',
+  'in-progress',
+  'complete',
+  'paid',
+]
+
 @Schema()
 export class MaintenanceTask {
   @Prop({
@@ -22,15 +39,22 @@ export class MaintenanceTask {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
   })
-  assigned_to: mongoose.Schema.Types.ObjectId
+  assigned_to?: mongoose.Schema.Types.ObjectId
 
   @Prop({
     type: String,
     required: true,
+    enum: TaskCategoriesEnum,
+    default: 'general',
   })
   category: string
+
+  // example: E/12345
+  @Prop({
+    type: String,
+  })
+  identifier?: string
 
   @Prop({
     type: String,
@@ -40,18 +64,16 @@ export class MaintenanceTask {
 
   @Prop({
     type: String,
-    required: true,
-    enum: ['pending', 'assigned', 'in-progress', 'complete', 'paid'],
+    enum: TaskStatusEnum,
     default: 'pending',
   })
-  status: string
+  status?: string
 
   @Prop({
     type: Date,
-    required: true,
     default: Date.now,
   })
-  created_at: Date
+  created_at?: Date
 }
 
 export const MaintenanceTaskSchema =

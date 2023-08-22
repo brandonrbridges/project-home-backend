@@ -5,13 +5,7 @@ export class CreateMaintenanceTaskDto {
 
   submitted_by: mongoose.Schema.Types.ObjectId
 
-  assigned_to: mongoose.Schema.Types.ObjectId
-
   category: string
 
   description: string
-
-  status: string
-
-  created_at: Date
 }
