@@ -48,9 +48,9 @@ export class Tenancy {
   frequency: string
 
   @Prop({
-    type: File,
+    type: String,
   })
-  agreement_file: File
+  agreement_file: string
 }
 
 export const TenancySchema = SchemaFactory.createForClass(Tenancy)

@@ -1,0 +1,41 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build and push Docker Image
+        run: |
+          docker build -t project-home-backend .
+          docker tag project-home-backend ${{ secrets.DOCKER_USERNAME }}/project-home-backend:latest
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKER_USERNAME }}/project-home-backend:latest
+
+      - name: SSH into VPS and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            docker stop project-home-backend || true
+            docker rm project-home-backend || true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/project-home-backend:latest
+            docker image prune --force
+            docker run -d --name project-home-backend \
+              -p 3001:3001 \
+              -e SECRET="${{ secrets.SECRET }}" \
+              -e MONGODB_URI="${{ secrets.MONGODB_URI }}" \
+              -e GMAIL_USER="${{ secrets.GMAIL_USER }}" \
+              -e GMAIL_PASS="${{ secrets.GMAIL_PASS }}" \
+              ${{ secrets.DOCKER_USERNAME }}/project-home-backend:latest
